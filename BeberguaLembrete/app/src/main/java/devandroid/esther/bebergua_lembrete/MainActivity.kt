@@ -13,12 +13,15 @@ import android.widget.TextView
 import android.widget.TimePicker
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
+import devandroid.esther.bebergua_lembrete.databinding.ActivityMainBinding
 import devandroid.esther.bebergua_lembrete.model.CalcularIngestaoDiaria
 import java.text.NumberFormat
 import java.util.Calendar
 import java.util.Locale
 
 class MainActivity : AppCompatActivity() {
+
+    private lateinit var binding: ActivityMainBinding
 
     private lateinit var edit_peso: EditText
     private lateinit var edit_idade: EditText
@@ -41,37 +44,39 @@ class MainActivity : AppCompatActivity() {
     @SuppressLint("SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         //supportActionBar!!.hide()
-        iniciarComponentes()
+       // iniciarComponentes()
         calcularIngestaoDiaria= CalcularIngestaoDiaria()
 
-        btn_calcular.setOnClickListener{
+        binding.btnCalcular.setOnClickListener{
 
-            if(edit_peso.text.toString().isEmpty()){
+            if(binding.editPeso.text.toString().isEmpty()){
                 Toast.makeText(this, R.string.toast_informe_peso, Toast.LENGTH_SHORT).show()
-            }else if(edit_idade.text.toString().isEmpty()){
+            }else if(binding.editIdade.text.toString().isEmpty()){
                 Toast.makeText(this, R.string.toast_informe_idade, Toast.LENGTH_SHORT).show()
             }else{
-                val peso = edit_peso.text.toString().toDouble()
-                val idade = edit_idade.text.toString().toInt()
+                val peso = binding.editPeso.text.toString().toDouble()
+                val idade = binding.editIdade.text.toString().toInt()
+
                 calcularIngestaoDiaria.calcularTotalML(peso, idade)
                 resultadoML = calcularIngestaoDiaria.resultadoML()
                 val formatar = NumberFormat.getNumberInstance(Locale("pt", "BR"))
                 formatar.isGroupingUsed = false
-                txt_resultado_ml.text = formatar.format(resultadoML)+ " " + "ml"
+                binding.txtResultadoMl.text = formatar.format(resultadoML)+ " " + "ml"
             }
         }
 
-        ic_redefinir_dados.setOnClickListener{
+        binding.icRedefinir.setOnClickListener{
             val alertDialog = AlertDialog.Builder(this)
             alertDialog.setTitle(R.string.dialogo_titulo)
                 .setMessage(R.string.dialogo_desc)
                 .setPositiveButton("Ok", { dialogInterface, i ->
-                    edit_peso.setText("")
-                    edit_idade.setText("")
-                    txt_resultado_ml.text = ""
+                    binding.editPeso.setText("")
+                    binding.editIdade.setText("")
+                    binding.txtResultadoMl.text = ""
                 })
             alertDialog.setNegativeButton( "Cancelar", { dialogoInterface, i ->
 
@@ -80,19 +85,22 @@ class MainActivity : AppCompatActivity() {
             dialog.show()
         }
 
-        btn_lembrate.setOnClickListener{
+        binding.btnDefinirLembrete.setOnClickListener{
 
             calendario = Calendar.getInstance()
             horaAtual = calendario.get(Calendar.HOUR_OF_DAY)
             minutosAtuais = calendario.get(Calendar.MINUTE)
             timePickerDialog = TimePickerDialog(this, { timePicker: TimePicker, hourOfDay: Int, minutes: Int ->
-                txt_hora.text= String.format("%02d", hourOfDay)
-                txt_minutos.text= String.format("%02d", minutes)
+                binding.txtHora.text= String.format("%02d", hourOfDay)
+                binding.txtMinutos.text= String.format("%02d", minutes)
             },horaAtual, minutosAtuais, true)
             timePickerDialog.show()
         }
 
-        btn_alarme.setOnClickListener {
+        binding.btnAlarme.setOnClickListener {
+
+            val txt_hora = binding.txtHora
+            val txt_minutos = binding.txtMinutos
 
             if (!txt_hora.text.toString().isEmpty() && !txt_minutos.text.toString().isEmpty()) {
                 val intent = Intent(AlarmClock.ACTION_SET_ALARM)
@@ -107,8 +115,8 @@ class MainActivity : AppCompatActivity() {
             }
         }
     }
-    private fun iniciarComponentes(){
-        edit_peso = findViewById(R.id.edit_peso)
+    /*private fun iniciarComponentes(){
+      edit_peso = findViewById(R.id.edit_peso)
         edit_idade = findViewById(R.id.edit_idade)
         btn_calcular = findViewById(R.id.btn_calcular)
         txt_resultado_ml = findViewById(R.id.txt_resultado_ml)
@@ -117,5 +125,5 @@ class MainActivity : AppCompatActivity() {
         btn_alarme = findViewById(R.id.btn_alarme)
         txt_hora = findViewById(R.id.txt_hora)
         txt_minutos = findViewById(R.id.txt_minutos)
-    }
+    }*/
 }
