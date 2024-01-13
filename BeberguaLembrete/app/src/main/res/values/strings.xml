@@ -12,4 +12,5 @@
     <string name="toast_informe_peso">Informe seu peso</string>
     <string name="dialogo_titulo">Redefinir dados</string>
     <string name="dialogo_desc">Deseja excluir todos os dados existentes?</string>
+    <string name="alarme_mensagem">Hora de beber água!</string>
 </resources>
